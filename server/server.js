@@ -108,6 +108,118 @@ app.post("/api/register", (req, res) => {
     }
 });
 
-app.listen(PORT, () =>
-    console.log(`Server listening on: http://localhost:${PORT}`)
-);
+app.post("/api/login", (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password)
+        return res.status(400).json({ error: "Missing fields" });
+
+    const user = db
+        .prepare("SELECT * FROM users WHERE username = ?")
+        .get(username);
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+        return res.status(401).json({ error: "Invalid credentials" });
+    }
+    res.json({ token: generateToken(user) });
+});
+
+app.get("/api/tickets", requireAuth(), (req, res) => {
+    const tickets = db.prepare("SELECT * FROM tickets").all();
+    res.json(tickets);
+});
+
+app.get("/api/tickets/:id", requireAuth(), (req, res) => {
+    const ticket = db
+        .prepare("SELECT * FROM tickets WHERE id = ?")
+        .get(req.params.id);
+    if (!ticket) return res.status(404).json({ error: "Ticket not found" });
+    res.json(ticket);
+});
+
+app.post("/api/tickets", requireAuth(), (req, res) => {
+    const { title, description, priority } = req.body;
+    if (!title) return res.status(400).json({ error: "Title is required" });
+
+    const stmt = db.prepare(
+        "INSERT INTO tickets (title, description, priority, user_id) VALUES (?, ?, ?, ?)"
+    );
+    const info = stmt.run(
+        title,
+        description || "",
+        priority || "medium",
+        req.user.id
+    );
+    const ticket = db
+        .prepare("SELECT * FROM tickets WHERE id = ?")
+        .get(info.lastInsertRowid);
+    res.status(201).json(ticket);
+});
+
+app.put("/api/tickets/:id", requireAuth(), (req, res) => {
+    const { title, description, status, priority, assignee_id } = req.body;
+    const ticket = db
+        .prepare("SELECT * FROM tickets WHERE id = ?")
+        .get(req.params.id);
+    if (!ticket) return res.status(404).json({ error: "Ticket not found" });
+
+    if (ticket.user_id !== req.user.id && req.user.role !== "admin") {
+        return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const stmt = db.prepare(`
+    UPDATE tickets SET
+      title = COALESCE(?, title),
+      description = COALESCE(?, description),
+      status = COALESCE(?, status),
+      priority = COALESCE(?, priority),
+      assignee_id = COALESCE(?, assignee_id)
+    WHERE id = ?
+  `);
+    stmt.run(title, description, status, priority, assignee_id, req.params.id);
+    const updated = db
+        .prepare("SELECT * FROM tickets WHERE id = ?")
+        .get(req.params.id);
+    res.json(updated);
+});
+
+app.delete("/api/tickets/:id", requireAuth(), (req, res) => {
+    const ticket = db
+        .prepare("SELECT * FROM tickets WHERE id = ?")
+        .get(req.params.id);
+    if (!ticket) return res.status(404).json({ error: "Ticket not found" });
+
+    if (ticket.user_id !== req.user.id && req.user.role !== "admin") {
+        return res.status(403).json({ error: "Forbidden" });
+    }
+
+    db.prepare("DELETE FROM comments WHERE ticket_id = ?").run(req.params.id);
+    db.prepare("DELETE FROM tickets WHERE id = ?").run(req.params.id);
+    res.status(204).send();
+});
+
+app.get("/api/tickets/:id/comments", requireAuth(), (req, res) => {
+    const comments = db
+        .prepare("SELECT * FROM comments WHERE ticket_id = ?")
+        .all(req.params.id);
+    res.json(comments);
+});
+
+app.post("/api/tickets/:id/comments", requireAuth(), (req, res) => {
+    const { message } = req.body;
+    if (!message) return res.status(400).json({ error: "Message is required" });
+
+    const ticket = db
+        .prepare("SELECT * FROM tickets WHERE id = ?")
+        .get(req.params.id);
+    if (!ticket) return res.status(404).json({ error: "Ticket not found" });
+
+    const stmt = db.prepare(
+        "INSERT INTO comments (ticket_id, user_id, message) VALUES (?, ?, ?)"
+    );
+    const info = stmt.run(req.params.id, req.user.id, message);
+    const comment = db
+        .prepare("SELECT * FROM comments WHERE id = ?")
+        .get(info.lastInsertRowid);
+    res.status(201).json(comment);
+});
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

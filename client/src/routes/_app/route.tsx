@@ -1,5 +1,3 @@
-import { isAuth } from "@/utils/auth";
-
 import {
     createFileRoute,
     Link,
@@ -8,8 +6,8 @@ import {
 } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_app")({
-    beforeLoad: ({ location }) => {
-        if (!isAuth) {
+    beforeLoad: ({ context, location }) => {
+        if (!context.auth.isAuthenticated) {
             throw redirect({
                 to: "/login",
                 search: { redirect: location.href },

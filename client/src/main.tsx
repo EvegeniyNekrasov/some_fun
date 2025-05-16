@@ -3,8 +3,14 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 
-const router = createRouter({ routeTree });
+const router = createRouter({
+    routeTree,
+    defaultPreload: "intent",
+    scrollRestoration: true,
+    context: { auth: undefined },
+});
 
 declare module "@tanstack/react-router" {
     interface Register {
@@ -14,14 +20,26 @@ declare module "@tanstack/react-router" {
 
 const queryClient = new QueryClient();
 
+function MainApp() {
+    const auth = useAuth();
+    return (
+        <RouterProvider
+            router={router}
+            context={{ auth }}
+        />
+    );
+}
+
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
     const root = ReactDOM.createRoot(rootElement);
     root.render(
         <StrictMode>
-            <QueryClientProvider client={queryClient}>
-                <RouterProvider router={router} />
-            </QueryClientProvider>
+            <AuthProvider>
+                <QueryClientProvider client={queryClient}>
+                    <MainApp />
+                </QueryClientProvider>
+            </AuthProvider>
         </StrictMode>
     );
 }

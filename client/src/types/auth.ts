@@ -15,7 +15,6 @@ export const AuthRegisterSchema = z.object({
     username: z.string(),
     email: z.string(),
     passowrd: z.string(),
-    role: z.string(),
 });
 
 export const AuthResponse = z.object({

@@ -31,7 +31,7 @@
       "@/ui": ["./src/ui"],
       "@/assets": ["./src/assets"],
       "@/utils": ["./src/utils"],
-      "@/routes": ["./src/routes"]
+      "@/routes": ["./src/routes"],
     }
   },
   "include": ["src"]

@@ -1,5 +1,9 @@
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 
 export const Route = createRootRoute({
-    component: () => <Outlet />,
+    component: () => (
+        <div className="bg-zinc-900 text-white w-full h-screen">
+            <Outlet />,
+        </div>
+    ),
 });

@@ -1,9 +1,5 @@
-import {
-    createFileRoute,
-    Link,
-    Outlet,
-    redirect,
-} from "@tanstack/react-router";
+import Sidebar from "@components/Sidebar/Sidebar";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_app")({
     beforeLoad: ({ context, location }) => {
@@ -19,20 +15,11 @@ export const Route = createFileRoute("/_app")({
 
 function AppLayout() {
     return (
-        <div>
-            <header>
-                <nav>
-                    <ul>
-                        <li>
-                            <Link to="/">Home</Link>
-                        </li>
-                        <li>
-                            <Link to="/about">About</Link>
-                        </li>
-                    </ul>
-                </nav>
-            </header>
-            <Outlet />
+        <div className="grid grid-cols-[300px_minmax(900px,_1fr)_100px] overflow-x-scroll h-full">
+            <Sidebar />
+            <div className="w-full h-full overflow-scroll">
+                <Outlet />
+            </div>
         </div>
     );
 }

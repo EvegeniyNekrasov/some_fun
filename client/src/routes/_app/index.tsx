@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_app/")({
 
 function HomePage() {
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-full overflow-hidden">
             <Kanban />
         </div>
     );
@@ -161,7 +161,7 @@ function Kanban() {
         });
     };
     return (
-        <div className="grid grid-flow-col gap-6 overflow-x-auto p-6 w-full h-full">
+        <div className="grid grid-flow-col gap-6 overflow-hidden p-6 w-full h-full">
             {columns.map((column) => (
                 <Column
                     key={column.id}

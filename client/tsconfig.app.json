@@ -22,18 +22,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "baseUrl": ".",
-    "paths": {
-      "@": ["./src/*", "./dist/*"],
-      "@/types": ["./src/types"],
-      "@/components": ["./src/components"],
-      "@/hooks": ["./src/hooks"],
-      "@/ui": ["./src/ui"],
-      "@/assets": ["./src/assets"],
-      "@/utils": ["./src/utils"],
-      "@/routes": ["./src/routes"],
-      "@/context": ["./src/context"],
-    }
   },
   "include": ["src"]
 }

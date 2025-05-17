@@ -1,6 +1,6 @@
-import RegisterForm from "@/components/Register/RegisterForm";
-import useRegister from "@/hooks/auth/useRegister";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import useRegister from "../hooks/auth/useRegister";
+import RegisterForm from "../components/Register/RegisterForm";
 
 export const Route = createFileRoute("/register")({
     beforeLoad: ({ context, location }) => {

@@ -1,6 +1,6 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { listOfNavLinks } from "./links";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Sidebar() {
     const location = useRouterState({ select: (s) => s.location });

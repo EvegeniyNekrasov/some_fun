@@ -16,7 +16,7 @@ export function makeEndpoint<
             typeof cfg.path === "function"
                 ? cfg.path(params as NonNullable<TParams>)
                 : cfg.path;
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("myapp.auth.token");
 
         const res = await http[cfg.method](url, {
             json: params && cfg.method !== "get" ? params : undefined,

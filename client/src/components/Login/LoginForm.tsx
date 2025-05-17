@@ -116,7 +116,7 @@ export default function LoginForm({ onLoginSubmit }: LoginFormProps) {
                         type="submit"
                         className="bg-zinc-700 mt-6 px-4 py-2 rounded
                          hover:bg-zinc-800 disabled:opacity-50 cursor-pointer">
-                        Sign in
+                        Signin
                     </button>
                 </form>
 

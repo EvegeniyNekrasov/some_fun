@@ -1,4 +1,4 @@
-import Sidebar from "@components/Sidebar/Sidebar";
+import Sidebar from "../../components/Sidebar/Sidebar";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_app")({

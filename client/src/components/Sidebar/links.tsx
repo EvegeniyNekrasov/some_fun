@@ -11,4 +11,5 @@ type NavigationLink = {
 export const listOfNavLinks: NavigationLink[] = [
     { path: "/", name: "Dashboar", icon: Home },
     { path: "/about", name: "About", icon: Home },
+    { path: "/projects", name: "Projects", icon: Home },
 ];

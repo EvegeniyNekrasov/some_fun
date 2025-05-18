@@ -1,10 +1,11 @@
 import * as React from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { projectsQueryOptions } from "../../../hooks/projects/useGetProjects";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import SlideOver from "../../../components/SlideOver/SlideOver";
 import ProjectForm from "../../../components/Projects/ProjectForm";
 import useMutateCreateProject from "../../../hooks/projects/useMutateCreateProject";
+import { Button } from "../../../ui/button/Button";
 
 export const Route = createFileRoute("/_app/projects/")({
     component: RouteComponent,
@@ -14,6 +15,7 @@ function RouteComponent() {
     const projectsQuery = useSuspenseQuery(projectsQueryOptions);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
     const { mutate } = useMutateCreateProject();
+    const navigate = useNavigate({ from: "/projects" });
 
     const handleCreateProject = () => setIsOpen(true);
 
@@ -29,15 +31,19 @@ function RouteComponent() {
         console.log(`${key} ${name} ${owner_id} ${created_at} ${description}`);
     };
 
+    function handleGoTo(id: number): void {
+        navigate({ to: `/projects/${id}` });
+    }
+
     return (
         <div className="p-4 flex flex-col gap-4">
             <div className="flex items-center justify-between">
                 <span>Header project page</span>
-                <button
-                    className="bg-blue-500 py-2 px-4 rounded cursor-poiner"
+                <Button
+                    variant={"link"}
                     onClick={handleCreateProject}>
                     Create project
-                </button>
+                </Button>
             </div>
             <div className="flex flex-wrap items-center gap-2">
                 {!projectsQuery.isFetching &&
@@ -50,7 +56,13 @@ function RouteComponent() {
                             <div
                                 key={item.id}
                                 className="flex flex-col gap-2 p-5 min-w-[150px] h-full max-w-[220px] w-full bg-zinc-700">
-                                <span>{item.key}</span>
+                                <Button
+                                    variant={"link"}
+                                    size={"sm"}
+                                    onClick={() => handleGoTo(item.id)}>
+                                    {item.key}
+                                </Button>
+                                {/* <span>{item.key}</span> */}
                                 <span>{item.name}</span>
                                 <span>{item.description}</span>
                             </div>

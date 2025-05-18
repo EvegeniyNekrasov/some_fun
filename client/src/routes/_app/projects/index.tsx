@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { projectsQueryOptions } from "../../../hooks/projects/useGetProjects";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import SlideOver from "../../../components/SlideOver/SlideOver";

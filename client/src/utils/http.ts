@@ -1,29 +1,37 @@
 import { z } from "zod";
 import { http } from "../ky";
 
-type Method = "get" | "post";
+type Method = "get" | "post" | "put" | "delete" | "patch";
 
 export function makeEndpoint<
-    TSchema extends z.ZodTypeAny,
-    TParams extends Record<string, unknown> | void = void,
+    TResponseSchema extends z.ZodTypeAny,
+    TPathParams extends Record<string, unknown> | void = void,
+    TQueryParams extends Record<string, unknown> | void = void,
+    TBody = void,
 >(cfg: {
     method: Method;
-    path: string | ((p: NonNullable<TParams>) => string);
-    response: TSchema;
+    path: string | ((p: NonNullable<TPathParams>) => string);
+    response: TResponseSchema;
 }) {
-    return async (params?: TParams): Promise<z.infer<TSchema>> => {
+    return async (args?: {
+        path?: TPathParams;
+        query?: TQueryParams;
+        body?: TBody;
+    }): Promise<z.infer<TResponseSchema>> => {
         const url =
             typeof cfg.path === "function"
-                ? cfg.path(params as NonNullable<TParams>)
+                ? cfg.path((args?.path ?? {}) as NonNullable<TPathParams>)
                 : cfg.path;
-        const token = localStorage.getItem("myapp.auth.token");
 
+        const token = localStorage.getItem("myapp.auth.token");
         const res = await http[cfg.method](url, {
-            json: params && cfg.method !== "get" ? params : undefined,
-            searchParams:
-                params && cfg.method !== "get"
-                    ? new URLSearchParams(params as Record<string, string>)
+            json:
+                cfg.method !== "get" && args?.body
+                    ? args.body?.data
                     : undefined,
+            searchParams: args?.query
+                ? new URLSearchParams(args.query as Record<string, string>)
+                : undefined,
             headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         }).json<unknown>();
 

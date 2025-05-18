@@ -279,6 +279,15 @@ app.delete("/api/tickets/:id", requireAuth(), (req, res) => {
     db.prepare("DELETE FROM tickets WHERE id=?").run(req.params.id);
     res.status(204).send();
 });
+
+app.get("/api/projects/:projectId/tickets", requireAuth(), (req, res) => {
+    const rows = db
+        .prepare("SELECT * FROM tickets WHERE project_id = ?")
+        .all(req.params.projectId);
+
+    res.json(rows);
+});
+
 app.get("/api/tickets/:id/comments", requireAuth(), (req, res) => {
     res.json(
         db

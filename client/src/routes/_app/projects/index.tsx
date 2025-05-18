@@ -4,6 +4,7 @@ import { projectsQueryOptions } from "../../../hooks/projects/useGetProjects";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import SlideOver from "../../../components/SlideOver/SlideOver";
 import ProjectForm from "../../../components/Projects/ProjectForm";
+import useMutateCreateProject from "../../../hooks/projects/useMutateCreateProject";
 
 export const Route = createFileRoute("/_app/projects/")({
     component: RouteComponent,
@@ -11,9 +12,10 @@ export const Route = createFileRoute("/_app/projects/")({
 
 function RouteComponent() {
     const projectsQuery = useSuspenseQuery(projectsQueryOptions);
-    const [open, isOpen] = React.useState<boolean>(false);
+    const [isOpen, setIsOpen] = React.useState<boolean>(false);
+    const { mutate } = useMutateCreateProject();
 
-    const handleCreateProject = () => isOpen(true);
+    const handleCreateProject = () => setIsOpen(true);
 
     const handleProjectSubmit = (
         key: string,
@@ -22,22 +24,44 @@ function RouteComponent() {
         created_at: string,
         description: string | null
     ) => {
+        mutate({ key, name, owner_id, description });
+        setIsOpen(false);
         console.log(`${key} ${name} ${owner_id} ${created_at} ${description}`);
     };
 
     return (
-        <div>
-            <span>Projects page</span>
+        <div className="p-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+                <span>Header project page</span>
+                <button
+                    className="bg-blue-500 py-2 px-4 rounded cursor-poiner"
+                    onClick={handleCreateProject}>
+                    Create project
+                </button>
+            </div>
             <div className="flex flex-wrap items-center gap-2">
                 {!projectsQuery.isFetching &&
                 projectsQuery.data.length === 0 ? (
                     <span>You dont have created projects yet</span>
                 ) : null}
+                {!projectsQuery.isFetching && projectsQuery.data.length > 0 ? (
+                    <div className="flex items-start gap-2">
+                        {projectsQuery.data.map((item) => (
+                            <div
+                                key={item.id}
+                                className="flex flex-col gap-2 p-5 min-w-[150px] h-full max-w-[220px] w-full bg-zinc-700">
+                                <span>{item.key}</span>
+                                <span>{item.name}</span>
+                                <span>{item.description}</span>
+                            </div>
+                        ))}
+                    </div>
+                ) : null}
             </div>
-            <button onClick={handleCreateProject}>Create project</button>
+
             <SlideOver
-                open={open}
-                toggle={isOpen}>
+                open={isOpen}
+                toggle={setIsOpen}>
                 <ProjectForm onProjectSubmit={handleProjectSubmit} />
             </SlideOver>
         </div>

@@ -1,7 +1,7 @@
 import {
     ProjectsSchema,
-    type CreatedProject,
-    ProjectSchema,
+    CreateProjectSchema,
+    type Project,
 } from "../types/projects";
 
 import { makeEndpoint } from "../utils/http";
@@ -12,8 +12,8 @@ export const listProjects = makeEndpoint<typeof ProjectsSchema, void>({
     response: ProjectsSchema,
 });
 
-export const makeProject = makeEndpoint<typeof ProjectSchema, CreatedProject>({
+export const makeProject = makeEndpoint<typeof CreateProjectSchema, Project>({
     method: "post",
     path: "/api/projects",
-    response: ProjectSchema,
+    response: CreateProjectSchema,
 });

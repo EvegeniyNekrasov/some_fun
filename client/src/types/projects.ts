@@ -6,11 +6,14 @@ export const ProjectSchema = z.object({
     name: z.string(),
     description: z.string(),
     owner_id: z.number(),
-    created_at: z.date(),
+    created_at: z.string(),
 });
 
 export const CreateProjectSchema = z.object({
-    id: z.number(),
+    key: z.string(),
+    name: z.string(),
+    description: z.string().nullable(),
+    owner_id: z.number(),
 });
 
 export const ProjectsSchema = z.array(ProjectSchema);

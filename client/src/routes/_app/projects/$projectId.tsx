@@ -2,11 +2,12 @@ import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Kanban } from "lucide-react";
 import type { Status } from "../../../types/statuses";
-import type { Tickets } from "../../../types/tickets";
+import type { Ticket, Tickets } from "../../../types/tickets";
 import useMutateUpdateTicket from "../../../hooks/tickets/useMutateUpdateTicket";
 import useGetTicketsListByProjectId from "../../../hooks/tickets/useGetTicketsListByProjectId";
 import useGetProjectById from "../../../hooks/projects/useGetProjectById";
 import useGetStatuses from "../../../hooks/statuses/useGetStatuses";
+import Dialog from "../../../ui/dialog/Dialog";
 
 export const Route = createFileRoute("/_app/projects/$projectId")({
     component: RouteComponent,
@@ -17,6 +18,10 @@ function RouteComponent() {
     const projectData = useGetProjectById(+projectId);
     const ticketListaData = useGetTicketsListByProjectId(+projectId);
     const statusesData = useGetStatuses();
+    const [open, setOpen] = React.useState(false);
+    const [selectedTicket, setSelectedTicket] = React.useState<Ticket | null>(
+        null
+    );
 
     const { mutate } = useMutateUpdateTicket();
     function onDragStart(
@@ -77,6 +82,18 @@ function RouteComponent() {
         return <span>Error while loading data</span>;
     }
 
+    function handleOpenTicket(id: number) {
+        const findedTicket = ticketListaData?.data?.find(
+            (ticket) => ticket.id === id
+        );
+
+        if (findedTicket) {
+            console.log(findedTicket);
+            setSelectedTicket(findedTicket);
+            setOpen(true);
+        }
+    }
+
     return (
         <div className="p-4 w-full h-full">
             {projectData.data ? (
@@ -90,6 +107,7 @@ function RouteComponent() {
                     <span>{projectData.data?.description}</span>
                 </div>
             ) : null}
+            <button onClick={() => setOpen(true)}>Open</button>
             {statusesData.data && ticketListaData.data ? (
                 <div className="flex items-center w-full h-full justify-between gap-4">
                     {statusesData?.data?.map((status) => {
@@ -104,11 +122,23 @@ function RouteComponent() {
                                 onDragOver={onDragOver}
                                 onDrop={onDrop}
                                 onDragStart={onDragStart}
+                                handleOpenTicket={handleOpenTicket}
                             />
                         );
                     })}
                 </div>
             ) : null}
+
+            <Dialog
+                onClose={() => setOpen(false)}
+                size="xxl"
+                title={{ type: "link", text: "Modal" }}
+                open={open}>
+                <div className="flex flex-col gap-2">
+                    <span>{selectedTicket?.priority}</span>
+                    <span>{selectedTicket?.title}</span>
+                </div>
+            </Dialog>
         </div>
     );
 }
@@ -119,6 +149,7 @@ function KanbanColumn({
     onDragOver,
     onDrop,
     onDragStart,
+    handleOpenTicket,
 }: {
     column: Status;
     tickets: Tickets;
@@ -129,6 +160,7 @@ function KanbanColumn({
         ticketId: number,
         fromStatusId: number
     ) => void;
+    handleOpenTicket: (id: number) => void;
 }) {
     return (
         <div
@@ -143,6 +175,7 @@ function KanbanColumn({
                     <div
                         key={ticket.id}
                         draggable
+                        onClick={() => handleOpenTicket(ticket.id)}
                         onDragStart={(e) =>
                             onDragStart(e, ticket.id, column.id)
                         }

@@ -22,13 +22,9 @@ export function makeEndpoint<
             typeof cfg.path === "function"
                 ? cfg.path((args?.path ?? {}) as NonNullable<TPathParams>)
                 : cfg.path;
-
         const token = localStorage.getItem("myapp.auth.token");
         const res = await http[cfg.method](url, {
-            json:
-                cfg.method !== "get" && args?.body
-                    ? args.body?.data
-                    : undefined,
+            json: cfg.method !== "get" && args?.body ? args.body : undefined,
             searchParams: args?.query
                 ? new URLSearchParams(args.query as Record<string, string>)
                 : undefined,

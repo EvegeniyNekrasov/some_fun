@@ -13,7 +13,7 @@ export default function useMutateUpdateTicket() {
 
     const { mutate } = useMutation<Ticket, Error, UpdateVars>({
         mutationFn: ({ id, data }) =>
-            updateTicket({ path: { id }, body: { data } }),
+            updateTicket({ path: { id }, body: data }),
 
         onSuccess: (updated, { projectId }) => {
             queryClient.setQueryData<Ticket[]>(

@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+
 import LoginForm from "../components/Login/LoginForm";
 import useLogin from "../hooks/auth/useLogin";
 
@@ -17,9 +18,11 @@ export const Route = createFileRoute("/login")({
 function Login() {
     const { mutate } = useLogin();
 
-    const handleLoginSubmit = (username: string, password: string) => {
-        mutate({ username, password });
-    };
-
-    return <LoginForm onLoginSubmit={handleLoginSubmit} />;
+    return (
+        <LoginForm
+            onLoginSubmit={(username: string, password: string) =>
+                mutate({ username, password })
+            }
+        />
+    );
 }

@@ -13,7 +13,8 @@ export const listTicketsByProjectId = makeEndpoint<
 export const updateTicket = makeEndpoint<
     typeof TicketSchema,
     { id: number },
-    { body: Ticket }
+    void,
+    Ticket
 >({
     method: "put",
     path: (p) => `/api/tickets/${p.id}`,

@@ -50,12 +50,14 @@ function RouteComponent() {
         if (fromStatusId === toStatusId) return;
         if (ticketListaData.data) {
             const ticket = ticketListaData.data?.find((t) => t.id === ticketId);
-            if (ticket) ticket.status_id = +toStatusId;
-            mutate({
-                id: ticketId,
-                projectId: +projectId,
-                data: ticket,
-            });
+            if (ticket) {
+                const updated = { ...ticket, status_id: +toStatusId };
+                mutate({
+                    id: ticketId,
+                    projectId: +projectId,
+                    data: updated,
+                });
+            }
         }
     }
 

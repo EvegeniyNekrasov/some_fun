@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { type AuthLogin, AuthResponse } from "../../types/auth";
@@ -8,13 +9,21 @@ import { useAuth } from "../../context/AuthContext";
 export default function useLogin() {
     const auth = useAuth();
     const navigate = useNavigate({ from: "/login" });
+    const { mutate } = useMutation<
+        z.infer<typeof AuthResponse>,
+        Error,
+        AuthLogin
+    >({
+        mutationFn: (data) =>
+            loginUser({
+                body: { username: data.username, password: data.password },
+            }),
 
-    const { mutate } = useMutation<typeof AuthResponse, Error, AuthLogin>({
-        mutationFn: ({ username, password }) =>
-            loginUser({ username, password }),
         onSuccess: (data) => {
-            auth.login(data.token);
-            navigate({ to: "/" });
+            if (data) {
+                auth.login(data.token);
+                navigate({ to: "/" });
+            }
         },
         onError: (err) => console.error("mutation error: ", err),
     });

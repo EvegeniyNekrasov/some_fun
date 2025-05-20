@@ -22,8 +22,21 @@ function RouteComponent() {
     const [selectedTicket, setSelectedTicket] = React.useState<Ticket | null>(
         null
     );
+    const [ticketList, setTicketList] = React.useState<Ticket[] | null>(null);
+    const [filteredTicketList, setFilteredTicketList] = React.useState<
+        Ticket[] | null
+    >(null);
+    const [inputText, setInputText] = React.useState<string>("");
 
     const { mutate } = useMutateUpdateTicket();
+
+    React.useEffect(() => {
+        if (ticketListaData.data) {
+            setTicketList(ticketListaData.data);
+            setFilteredTicketList(ticketListaData.data);
+        }
+    }, [ticketListaData.data]);
+
     function onDragStart(
         e: React.DragEvent<HTMLDivElement>,
         ticketId: number,
@@ -33,6 +46,20 @@ function RouteComponent() {
             "application/json",
             JSON.stringify({ ticketId, fromStatusId })
         );
+    }
+
+    function filterTickets(value: string): void {
+        setInputText(value);
+        const copyList = ticketList;
+        if (copyList) {
+            const filteredList = copyList?.filter((item) =>
+                item.title
+                    .toLocaleLowerCase()
+                    .includes(value.toLocaleLowerCase())
+            );
+
+            setFilteredTicketList(filteredList);
+        }
     }
 
     function onDragOver(e: React.DragEvent<HTMLDivElement>) {
@@ -95,7 +122,7 @@ function RouteComponent() {
     }
 
     return (
-        <div className="p-4 w-full h-full">
+        <div className="p-4 flex flex-col gap-2 w-full h-full">
             {projectData.data ? (
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
@@ -107,11 +134,18 @@ function RouteComponent() {
                     <span>{projectData.data?.description}</span>
                 </div>
             ) : null}
-            <button onClick={() => setOpen(true)}>Open</button>
-            {statusesData.data && ticketListaData.data ? (
-                <div className="flex items-center w-full h-full justify-between gap-4">
+            <input
+                type="text"
+                placeholder="search for ticket..."
+                value={inputText}
+                className="w-full h-8 p-2 bg-zinc-700"
+                onChange={(e) => filterTickets(e.target.value)}
+            />
+
+            {statusesData.data && filteredTicketList ? (
+                <div className="flex w-full h-full justify-between gap-4">
                     {statusesData?.data?.map((status) => {
-                        const filteredTickets = ticketListaData?.data?.filter(
+                        const filteredTickets = filteredTicketList?.filter(
                             (ticket) => ticket.status_id === status.id
                         );
                         return (
@@ -132,7 +166,7 @@ function RouteComponent() {
             <Dialog
                 onClose={() => setOpen(false)}
                 size="xxl"
-                title={{ type: "link", text: "Modal" }}
+                title={{ type: "link", text: selectedTicket?.title ?? "" }}
                 open={open}>
                 <div className="flex flex-col gap-2">
                     <span>{selectedTicket?.priority}</span>
@@ -165,12 +199,15 @@ function KanbanColumn({
     return (
         <div
             key={column.id}
-            className="bg-zinc-600 w-full h-full p-2 rounded-sm select-none cursor-grab active:cursor-grabbing 
+            className="bg-zinc-600 w-full h-fit p-4 rounded-sm select-none cursor-grab active:cursor-grabbing 
                         transition-transform"
             onDragOver={onDragOver}
             onDrop={(e) => onDrop(e, column.id)}>
-            <span>{column.name}</span>
-            <div>
+            <div className="flex items-center justify-between">
+                <span>{column.name}</span>
+                <span>{tickets.length}</span>
+            </div>
+            <div className="flex flex-col gap-2">
                 {tickets.map((ticket) => (
                     <div
                         key={ticket.id}
@@ -179,7 +216,7 @@ function KanbanColumn({
                         onDragStart={(e) =>
                             onDragStart(e, ticket.id, column.id)
                         }
-                        className="p-2 bg-zinc-400 flex flex-col gap-2">
+                        className="p-4 bg-zinc-400 flex flex-col gap-2">
                         <span>Title: {ticket.title}</span>
                         <span>Priority: {ticket.priority}</span>
                     </div>

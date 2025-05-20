@@ -166,7 +166,11 @@ function RouteComponent() {
             <Dialog
                 onClose={() => setOpen(false)}
                 size="xxl"
-                title={{ type: "link", text: selectedTicket?.title ?? "" }}
+                title={{
+                    type: "link",
+                    text: selectedTicket?.title ?? "",
+                    to: `/tickets/${selectedTicket?.id}`,
+                }}
                 open={open}>
                 <div className="flex flex-col gap-2">
                     <span>{selectedTicket?.priority}</span>

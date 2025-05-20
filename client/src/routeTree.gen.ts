@@ -17,6 +17,7 @@ import { Route as AppRouteImport } from './routes/_app/route'
 import { Route as AppIndexImport } from './routes/_app/index'
 import { Route as AppAboutImport } from './routes/_app/about'
 import { Route as AppProjectsIndexImport } from './routes/_app/projects/index'
+import { Route as AppTicketsTicketIdImport } from './routes/_app/tickets/$ticketId'
 import { Route as AppProjectsProjectIdImport } from './routes/_app/projects/$projectId'
 
 // Create/Update Routes
@@ -53,6 +54,12 @@ const AppAboutRoute = AppAboutImport.update({
 const AppProjectsIndexRoute = AppProjectsIndexImport.update({
   id: '/projects/',
   path: '/projects/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+
+const AppTicketsTicketIdRoute = AppTicketsTicketIdImport.update({
+  id: '/tickets/$ticketId',
+  path: '/tickets/$ticketId',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
@@ -108,6 +115,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProjectsProjectIdImport
       parentRoute: typeof AppRouteImport
     }
+    '/_app/tickets/$ticketId': {
+      id: '/_app/tickets/$ticketId'
+      path: '/tickets/$ticketId'
+      fullPath: '/tickets/$ticketId'
+      preLoaderRoute: typeof AppTicketsTicketIdImport
+      parentRoute: typeof AppRouteImport
+    }
     '/_app/projects/': {
       id: '/_app/projects/'
       path: '/projects'
@@ -124,6 +138,7 @@ interface AppRouteRouteChildren {
   AppAboutRoute: typeof AppAboutRoute
   AppIndexRoute: typeof AppIndexRoute
   AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRoute
+  AppTicketsTicketIdRoute: typeof AppTicketsTicketIdRoute
   AppProjectsIndexRoute: typeof AppProjectsIndexRoute
 }
 
@@ -131,6 +146,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAboutRoute: AppAboutRoute,
   AppIndexRoute: AppIndexRoute,
   AppProjectsProjectIdRoute: AppProjectsProjectIdRoute,
+  AppTicketsTicketIdRoute: AppTicketsTicketIdRoute,
   AppProjectsIndexRoute: AppProjectsIndexRoute,
 }
 
@@ -145,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AppAboutRoute
   '/': typeof AppIndexRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
+  '/tickets/$ticketId': typeof AppTicketsTicketIdRoute
   '/projects': typeof AppProjectsIndexRoute
 }
 
@@ -154,6 +171,7 @@ export interface FileRoutesByTo {
   '/about': typeof AppAboutRoute
   '/': typeof AppIndexRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRoute
+  '/tickets/$ticketId': typeof AppTicketsTicketIdRoute
   '/projects': typeof AppProjectsIndexRoute
 }
 
@@ -165,6 +183,7 @@ export interface FileRoutesById {
   '/_app/about': typeof AppAboutRoute
   '/_app/': typeof AppIndexRoute
   '/_app/projects/$projectId': typeof AppProjectsProjectIdRoute
+  '/_app/tickets/$ticketId': typeof AppTicketsTicketIdRoute
   '/_app/projects/': typeof AppProjectsIndexRoute
 }
 
@@ -177,6 +196,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/'
     | '/projects/$projectId'
+    | '/tickets/$ticketId'
     | '/projects'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -185,6 +205,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/'
     | '/projects/$projectId'
+    | '/tickets/$ticketId'
     | '/projects'
   id:
     | '__root__'
@@ -194,6 +215,7 @@ export interface FileRouteTypes {
     | '/_app/about'
     | '/_app/'
     | '/_app/projects/$projectId'
+    | '/_app/tickets/$ticketId'
     | '/_app/projects/'
   fileRoutesById: FileRoutesById
 }
@@ -231,6 +253,7 @@ export const routeTree = rootRoute
         "/_app/about",
         "/_app/",
         "/_app/projects/$projectId",
+        "/_app/tickets/$ticketId",
         "/_app/projects/"
       ]
     },
@@ -250,6 +273,10 @@ export const routeTree = rootRoute
     },
     "/_app/projects/$projectId": {
       "filePath": "_app/projects/$projectId.tsx",
+      "parent": "/_app"
+    },
+    "/_app/tickets/$ticketId": {
+      "filePath": "_app/tickets/$ticketId.tsx",
       "parent": "/_app"
     },
     "/_app/projects/": {

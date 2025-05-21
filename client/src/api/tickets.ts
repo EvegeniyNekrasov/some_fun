@@ -20,3 +20,25 @@ export const updateTicket = makeEndpoint<
     path: (p) => `/api/tickets/${p.id}`,
     response: TicketSchema,
 });
+
+export const tiketById = makeEndpoint<
+    typeof TicketSchema,
+    { id: number },
+    void,
+    void
+>({
+    method: "get",
+    path: (p) => `/api/tickets/${p.id}`,
+    response: TicketSchema,
+});
+
+export const createTicket = makeEndpoint<
+    typeof TicketSchema,
+    void,
+    void,
+    Ticket
+>({
+    method: "post",
+    path: () => `/api/tickets`,
+    response: TicketSchema,
+});

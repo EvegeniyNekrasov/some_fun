@@ -10,7 +10,9 @@ export default function useMutateCreateProject() {
         CreatedProject
     >({
         mutationFn: ({ key, name, description, owner_id }) =>
-            makeProject({ key, name, description, owner_id }),
+            makeProject({
+                body: { key, name, description: description ?? "", owner_id },
+            }),
         onSuccess: () =>
             queryClient.invalidateQueries({ queryKey: ["listProjects"] }),
     });

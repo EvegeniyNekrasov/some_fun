@@ -13,7 +13,12 @@ export const listProjects = makeEndpoint<typeof ProjectsSchema, void>({
     response: ProjectsSchema,
 });
 
-export const makeProject = makeEndpoint<typeof CreateProjectSchema, Project>({
+export const makeProject = makeEndpoint<
+    typeof CreateProjectSchema,
+    void,
+    void,
+    Project
+>({
     method: "post",
     path: "/api/projects",
     response: CreateProjectSchema,

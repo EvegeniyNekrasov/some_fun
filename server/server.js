@@ -99,6 +99,44 @@ function generateToken(u) {
         { expiresIn: "8h" }
     );
 }
+
+// Seed some users if none
+const { count } = db.prepare("SELECT COUNT(*) AS count FROM users").get();
+if (count === 0) {
+    const seedUsers = [
+        {
+            username: "admin",
+            email: "admin@example.com",
+            password: "admin123",
+            role: "admin",
+        },
+        { username: "alice", email: "alice@example.com", password: "secret" },
+        { username: "bob", email: "bob@example.com", password: "secret" },
+        { username: "carol", email: "carol@example.com", password: "secret" },
+        { username: "dave", email: "dave@example.com", password: "secret" },
+        { username: "eve", email: "eve@example.com", password: "secret" },
+        { username: "frank", email: "frank@example.com", password: "secret" },
+        { username: "grace", email: "grace@example.com", password: "secret" },
+    ];
+
+    const insert = db.prepare(
+        "INSERT INTO users(username,email,password,role) VALUES (?,?,?,?)"
+    );
+    const insertMany = db.transaction((users) => {
+        for (const u of users) {
+            insert.run(
+                u.username,
+                u.email,
+                bcrypt.hashSync(u.password, 10),
+                u.role || "user"
+            );
+        }
+    });
+
+    insertMany(seedUsers);
+    console.log(`Seeded ${seedUsers.length} users`);
+}
+
 function requireAuth(role = null) {
     return (req, res, next) => {
         const h = req.headers.authorization || "";
@@ -309,4 +347,10 @@ app.post("/api/tickets/:id/comments", requireAuth(), (req, res) => {
             .get(info.lastInsertRowid)
     );
 });
+
+app.get("/api/users", requireAuth(), (req, res) => {
+    const users = db.prepare("SELECT id, username, email FROM users").all();
+    res.json(users);
+});
+
 app.listen(PORT, () => console.log("Server running on port " + PORT));

@@ -2,22 +2,44 @@ import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Kanban } from "lucide-react";
 import type { Status } from "../../../types/statuses";
-import type { Ticket, Tickets } from "../../../types/tickets";
-import useMutateUpdateTicket from "../../../hooks/tickets/useMutateUpdateTicket";
 import useGetTicketsListByProjectId from "../../../hooks/tickets/useGetTicketsListByProjectId";
 import useGetProjectById from "../../../hooks/projects/useGetProjectById";
 import useGetStatuses from "../../../hooks/statuses/useGetStatuses";
 import Dialog from "../../../ui/dialog/Dialog";
+import useGetUsersList from "../../../hooks/users/useGetUsersList";
+import SlideOver from "../../../components/SlideOver/SlideOver";
+import { Button } from "../../../ui/button/Button";
+import TicketForm from "../../../components/Projects/TicketForm";
+import useMutateCreateTicket from "../../../hooks/tickets/useMutateCreateTicket";
+import type { Ticket, Tickets } from "../../../types/tickets";
+import useMutateUpdateTicket from "../../../hooks/tickets/useMutateUpdateTicket";
 
 export const Route = createFileRoute("/_app/projects/$projectId")({
     component: RouteComponent,
 });
 
+type TicketCreate = {
+    title: string;
+    description: string;
+    status_id: number;
+    priority: string;
+    user_id: number;
+    assignee_id: number | null;
+    story_points: number | null;
+};
+
 function RouteComponent() {
     const projectId = Route.useParams().projectId;
     const projectData = useGetProjectById(+projectId);
-    const ticketListaData = useGetTicketsListByProjectId(+projectId);
+    const ticketListaData = useGetTicketsListByProjectId(Number(projectId));
+    const usersList = useGetUsersList();
     const statusesData = useGetStatuses();
+
+    const { mutate: updateTicketMutate } = useMutateUpdateTicket();
+    const { mutate: createTicketMutate } = useMutateCreateTicket();
+
+    const [openCreateProject, setOpenCreateProject] = React.useState(false);
+
     const [open, setOpen] = React.useState(false);
     const [selectedTicket, setSelectedTicket] = React.useState<Ticket | null>(
         null
@@ -28,8 +50,6 @@ function RouteComponent() {
     >(null);
     const [inputText, setInputText] = React.useState<string>("");
 
-    const { mutate } = useMutateUpdateTicket();
-
     React.useEffect(() => {
         if (ticketListaData.data) {
             setTicketList(ticketListaData.data);
@@ -37,6 +57,16 @@ function RouteComponent() {
         }
     }, [ticketListaData.data]);
 
+    // function onDragStart(
+    //     e: React.DragEvent<HTMLDivElement>,
+    //     project_id: number,
+    //     fromStatusId: number
+    // ) {
+    //     e.dataTransfer.setData(
+    //         "application/json",
+    //         JSON.stringify({ project_id, fromStatusId })
+    //     );
+    // }
     function onDragStart(
         e: React.DragEvent<HTMLDivElement>,
         ticketId: number,
@@ -84,9 +114,9 @@ function RouteComponent() {
             const ticket = ticketListaData.data?.find((t) => t.id === ticketId);
             if (ticket) {
                 const updated = { ...ticket, status_id: +toStatusId };
-                mutate({
+                updateTicketMutate({
                     id: ticketId,
-                    projectId: +projectId,
+                    project_id: Number(projectId),
                     data: updated,
                 });
             }
@@ -121,15 +151,25 @@ function RouteComponent() {
         }
     }
 
+    function onTicketCreate(ticket: TicketCreate) {
+        const newTicket = { ...ticket, project_id: +projectId, type_id: 1 };
+        createTicketMutate({ project_id: +projectId, data: newTicket });
+    }
+
     return (
         <div className="p-4 flex flex-col gap-2 w-full h-full">
             {projectData.data ? (
                 <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                        <Kanban />
-                        <span className="text-2xl">
-                            {projectData.data?.name}
-                        </span>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Kanban />
+                            <span className="text-2xl">
+                                {projectData.data?.name}
+                            </span>
+                        </div>
+                        <Button onClick={() => setOpenCreateProject(true)}>
+                            create ticket
+                        </Button>
                     </div>
                     <span>{projectData.data?.description}</span>
                 </div>
@@ -177,6 +217,15 @@ function RouteComponent() {
                     <span>{selectedTicket?.title}</span>
                 </div>
             </Dialog>
+            <SlideOver
+                open={openCreateProject}
+                toggle={setOpenCreateProject}>
+                <TicketForm
+                    onTicketCreate={onTicketCreate}
+                    usersList={usersList.data || []}
+                    currentUserId={1}
+                />
+            </SlideOver>
         </div>
     );
 }
@@ -195,7 +244,7 @@ function KanbanColumn({
     onDrop: (e: React.DragEvent<HTMLDivElement>, toStatusId: number) => void;
     onDragStart: (
         e: React.DragEvent<HTMLDivElement>,
-        ticketId: number,
+        project_id: number,
         fromStatusId: number
     ) => void;
     handleOpenTicket: (id: number) => void;
@@ -203,7 +252,8 @@ function KanbanColumn({
     return (
         <div
             key={column.id}
-            className="bg-zinc-600 w-full h-fit p-4 rounded-sm select-none cursor-grab active:cursor-grabbing 
+            className="bg-zinc-600 w-full h-fit p-4 rounded-sm select-none 
+                        cursor-grab active:cursor-grabbing 
                         transition-transform"
             onDragOver={onDragOver}
             onDrop={(e) => onDrop(e, column.id)}>

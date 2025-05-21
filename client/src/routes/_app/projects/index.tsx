@@ -15,6 +15,7 @@ function RouteComponent() {
     const projectsQuery = useSuspenseQuery(projectsQueryOptions);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
     const { mutate } = useMutateCreateProject();
+    
     const navigate = useNavigate({ from: "/projects" });
 
     const handleCreateProject = () => setIsOpen(true);

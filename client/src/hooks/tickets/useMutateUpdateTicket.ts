@@ -4,9 +4,11 @@ import { updateTicket } from "../../api/tickets";
 
 type UpdateVars = {
     id: number;
-    projectId: number;
+    project_id: number;
     data: Ticket;
 };
+
+
 
 export default function useMutateUpdateTicket() {
     const queryClient = useQueryClient();
@@ -15,16 +17,16 @@ export default function useMutateUpdateTicket() {
         mutationFn: ({ id, data }) =>
             updateTicket({ path: { id }, body: data }),
 
-        onSuccess: (updated, { projectId }) => {
+        onSuccess: (updated, { project_id }) => {
             queryClient.setQueryData<Ticket[]>(
-                ["listTicketsByCodProject", projectId],
+                ["listTicketsByCodProject", project_id],
                 (old) =>
                     old
                         ? old.map((t) => (t.id === updated.id ? updated : t))
                         : []
             );
             queryClient.invalidateQueries({
-                queryKey: ["listTicketsByCodProject", projectId],
+                queryKey: ["listTicketsByCodProject", project_id],
             });
         },
     });

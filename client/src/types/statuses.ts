@@ -10,4 +10,4 @@ export const StatusSchema = z.object({
 export const StatusesListSchema = z.array(StatusSchema);
 
 export type Status = z.infer<typeof StatusSchema>;
-export type StatusList  = z.infer<typeof StatusesListSchema>
+export type StatusList = z.infer<typeof StatusesListSchema>;

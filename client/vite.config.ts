@@ -1,8 +1,10 @@
-import { defineConfig } from "vite";
+import { type AliasOptions, defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
-// import path from "path";
+import path from "path";
+
+const root = path.resolve(__dirname, "src");
 
 export default defineConfig({
     plugins: [
@@ -10,6 +12,11 @@ export default defineConfig({
         react(),
         tailwindcss(),
     ],
+    resolve: {
+        alias: {
+            "@": root,
+        } as AliasOptions,
+    },
     server: {
         proxy: {
             "/api": {

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import useGetTicketById from "../../../../hooks/tickets/useGetTicketById";
-import useGetUsersList from "../../../../hooks/users/useGetUsersList";
+import useGetTicketById from "@/hooks/tickets/useGetTicketById";
+import useGetUsersList from "@/hooks/users/useGetUsersList";
 
 export const Route = createFileRoute(
     "/_app/projects/$projectId/ticket/$ticketId"

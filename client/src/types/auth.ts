@@ -14,11 +14,12 @@ export const AuthLoginSchema = z.object({
 export const AuthRegisterSchema = z.object({
     username: z.string(),
     email: z.string(),
-    passowrd: z.string(),
+    password: z.string(),
 });
 
 export const AuthResponse = z.object({
     token: z.string(),
+    userId: z.number(),
 });
 
 export type AuthLogin = z.infer<typeof AuthLoginSchema>;

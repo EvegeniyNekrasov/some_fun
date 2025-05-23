@@ -2,47 +2,65 @@ import * as React from "react";
 
 export interface AuthContext {
     isAuthenticated: boolean;
-    login: (token: string) => void;
+    login: (token: string, userId: number) => void;
     logout: () => void;
+    userId: number | null;
     token: string | null;
 }
 
 const AuthContext = React.createContext<AuthContext | null>(null);
 
-const KEY = "myapp.auth.token";
+const TOKEN_KEY = "myapp.auth.token";
+const ID_KEY = "myapp.auth.userId";
 
-function getStorageToken() {
-    return localStorage.getItem(KEY);
-}
+const getStorageUserId = () => {
+    const raw = localStorage.getItem(ID_KEY);
+    return raw ? Number(raw) : null;
+};
+const getStorageToken = () => localStorage.getItem(TOKEN_KEY);
 
-function setStorageToken(token: string | null) {
+function setStorage(token: string | null, userId: number | null) {
     if (token) {
-        localStorage.setItem(KEY, token);
+        localStorage.setItem(TOKEN_KEY, token);
+        localStorage.setItem(ID_KEY, String(userId ?? ""));
     } else {
-        localStorage.removeItem(KEY);
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(ID_KEY);
     }
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = React.useState<string | null>(getStorageToken());
+    const [userId, setUserId] = React.useState<number | null>(
+        getStorageUserId()
+    );
+
     const isAuthenticated = !!token;
 
     const logout = React.useCallback(() => {
-        setStorageToken(null);
+        setStorage(null, null);
         setToken(null);
+        setUserId(null);
     }, []);
 
-    const login = React.useCallback((token: string) => {
-        setStorageToken(token);
+    const login = React.useCallback((token: string, userId: number) => {
+        setStorage(token, userId);
         setToken(token);
+        setUserId(userId);
     }, []);
 
     React.useEffect(() => {
-        setToken(getStorageToken());
+        const handler = () => {
+            setToken(getStorageToken());
+            setUserId(getStorageUserId());
+        };
+        window.addEventListener("storage", handler);
+        return () => window.removeEventListener("storage", handler);
     }, []);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, token, login, logout }}>
+        <AuthContext.Provider
+            value={{ isAuthenticated, token, userId, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

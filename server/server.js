@@ -169,6 +169,7 @@ app.post("/api/register", (req, res) => {
                 username,
                 role: role || "user",
             }),
+            userId: info.lastInsertRowid,
         });
     } catch (e) {
         if (e.code === "SQLITE_CONSTRAINT_UNIQUE")
@@ -185,7 +186,7 @@ app.post("/api/login", (req, res) => {
     const u = db.prepare("SELECT * FROM users WHERE username=?").get(username);
     if (!u || !bcrypt.compareSync(password, u.password))
         return res.status(401).json({ error: "Invalid credentials" });
-    res.json({ token: generateToken(u) });
+    res.json({ token: generateToken(u), userId: u.id });
 });
 app.get("/api/projects", requireAuth(), (req, res) => {
     const rows = db.prepare("SELECT * FROM projects").all();

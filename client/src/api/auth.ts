@@ -14,7 +14,9 @@ export const loginUser = makeEndpoint<
 
 export const registerUser = makeEndpoint<
     typeof AuthResponse,
-    { body: AuthRegister }
+    void,
+    void,
+    AuthRegister
 >({
     method: "post",
     path: "/api/register",

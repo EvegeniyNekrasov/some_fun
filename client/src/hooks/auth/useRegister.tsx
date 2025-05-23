@@ -1,18 +1,30 @@
-import { registerUser } from "@/api/auth";
+import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { AuthRegister, AuthResponse } from "@/types/auth";
-import { useAuth } from "@/context/AuthContext";
+
+import { useAuth } from "../../context/AuthContext";
+import { type AuthResponse, type AuthRegister } from "../../types/auth";
+import { registerUser } from "../../api/auth";
 
 export default function useRegister() {
-    const auth = useAuth();
+    const { login } = useAuth();
     const navigate = useNavigate({ from: "/register" });
 
-    const { mutate } = useMutation<AuthResponse, Error, AuthRegister>({
-        mutationFn: ({ username, password, email }) =>
-            registerUser({ username, password, email }),
+    const { mutate } = useMutation<
+        z.infer<typeof AuthResponse>,
+        Error,
+        AuthRegister
+    >({
+        mutationFn: (data) =>
+            registerUser({
+                body: {
+                    username: data.username,
+                    password: data.password,
+                    email: data.email,
+                },
+            }),
         onSuccess: (data) => {
-            auth.login(data.token);
+            login(data.token, data.userId);
             navigate({ to: "/" });
         },
         onError: (err) => console.error("mutation error: ", err),

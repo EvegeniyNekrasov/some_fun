@@ -7,7 +7,7 @@ import { loginUser } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext";
 
 export default function useLogin() {
-    const auth = useAuth();
+    const { login } = useAuth();
     const navigate = useNavigate({ from: "/login" });
     const { mutate } = useMutation<
         z.infer<typeof AuthResponse>,
@@ -21,7 +21,7 @@ export default function useLogin() {
 
         onSuccess: (data) => {
             if (data) {
-                auth.login(data.token);
+                login(data.token, data.userId);
                 navigate({ to: "/" });
             }
         },

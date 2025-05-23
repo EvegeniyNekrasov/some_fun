@@ -34,10 +34,6 @@ export default function RegisterForm({ onRegisterSubmit }: RegisterFormProps) {
         passwordRepeat,
         email,
     }) => {
-        console.log("username: ", username);
-        console.log("password: ", password);
-        console.log("passwordRepeat: ", passwordRepeat);
-        console.log("email: ", email);
         if (username && password && email && passwordRepeat) {
             if (password.trim() === passwordRepeat.trim()) {
                 onRegisterSubmit(username, password, email);

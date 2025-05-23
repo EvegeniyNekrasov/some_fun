@@ -1,20 +1,20 @@
 import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Kanban } from "lucide-react";
-import type { Status } from "../../../types/statuses";
-import useGetTicketsListByProjectId from "../../../hooks/tickets/useGetTicketsListByProjectId";
-import useGetProjectById from "../../../hooks/projects/useGetProjectById";
-import useGetStatuses from "../../../hooks/statuses/useGetStatuses";
-import Dialog from "../../../ui/dialog/Dialog";
-import useGetUsersList from "../../../hooks/users/useGetUsersList";
-import SlideOver from "../../../components/SlideOver/SlideOver";
-import { Button } from "../../../ui/button/Button";
-import TicketForm from "../../../components/Projects/TicketForm";
-import useMutateCreateTicket from "../../../hooks/tickets/useMutateCreateTicket";
-import type { Ticket, Tickets } from "../../../types/tickets";
-import useMutateUpdateTicket from "../../../hooks/tickets/useMutateUpdateTicket";
+import type { Status } from "../../../../types/statuses";
+import useGetTicketsListByProjectId from "../../../../hooks/tickets/useGetTicketsListByProjectId";
+import useGetProjectById from "../../../../hooks/projects/useGetProjectById";
+import useGetStatuses from "../../../../hooks/statuses/useGetStatuses";
+import Dialog from "../../../../ui/dialog/Dialog";
+import useGetUsersList from "../../../../hooks/users/useGetUsersList";
+import SlideOver from "../../../../components/SlideOver/SlideOver";
+import { Button } from "../../../../ui/button/Button";
+import TicketForm from "../../../../components/Projects/TicketForm";
+import useMutateCreateTicket from "../../../../hooks/tickets/useMutateCreateTicket";
+import type { Ticket, Tickets } from "../../../../types/tickets";
+import useMutateUpdateTicket from "../../../../hooks/tickets/useMutateUpdateTicket";
 
-export const Route = createFileRoute("/_app/projects/$projectId")({
+export const Route = createFileRoute("/_app/projects/$projectId/")({
     component: RouteComponent,
 });
 
@@ -209,7 +209,7 @@ function RouteComponent() {
                 title={{
                     type: "link",
                     text: selectedTicket?.title ?? "",
-                    to: `/tickets/${selectedTicket?.id}`,
+                    to: `/projects/${projectId}/ticket/${selectedTicket?.id}`,
                 }}
                 open={open}>
                 <div className="flex flex-col gap-2">

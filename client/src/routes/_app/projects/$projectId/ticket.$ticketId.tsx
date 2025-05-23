@@ -2,6 +2,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 
 import type { Comment } from "@/types/comments";
 import CommentForm from "@/components/Forms/CommentForm";
+import CommentList from "@/components/Comments/CommentsList";
 import { useAuth } from "@/context/AuthContext";
 import useGetCommentsByTicketId from "@/hooks/comments/useGetCommentsByTicketId";
 import useGetTicketById from "@/hooks/tickets/useGetTicketById";
@@ -79,29 +80,10 @@ function RouteComponent() {
                         {comments.data.length === 0 ? (
                             <div>no comments yet</div>
                         ) : null}
-                        {comments.data?.length > 0 ? (
-                            <ul>
-                                {comments.data.map((c) => (
-                                    <li key={c.id}>
-                                        <div className="flex items-center justify-between">
-                                            <span>{c.message}</span>
-                                            <div className="flex items-center gap-2">
-                                                <span>{c.created_at}</span>
-                                                <span>
-                                                    {
-                                                        users.data?.find(
-                                                            (u) =>
-                                                                u.id ===
-                                                                c.user_id
-                                                        )?.username
-                                                    }
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : null}
+                        <CommentList
+                            comments={comments.data}
+                            usersList={users.data}
+                        />
                     </div>
                 ) : null}
             </div>

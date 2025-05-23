@@ -18,6 +18,7 @@ export default function useRegister() {
         mutationFn: (data) =>
             registerUser({
                 body: {
+                    user: data.user,
                     username: data.username,
                     password: data.password,
                     email: data.email,

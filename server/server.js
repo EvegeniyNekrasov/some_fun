@@ -15,7 +15,8 @@ db.pragma("foreign_keys=ON");
 db.exec(`
     CREATE TABLE IF NOT EXISTS users(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
+        user TEXT UNIQUE NOT NULL,
+        username TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
         role TEXT DEFAULT 'user'
@@ -94,7 +95,7 @@ app.use(cors());
 app.use(express.json());
 function generateToken(u) {
     return jwt.sign(
-        { id: u.id, username: u.username, role: u.role },
+        { id: u.id, user: u.user, username: u.username, role: u.role },
         JWT_SECRET,
         { expiresIn: "8h" }
     );
@@ -105,26 +106,74 @@ const { count } = db.prepare("SELECT COUNT(*) AS count FROM users").get();
 if (count === 0) {
     const seedUsers = [
         {
-            username: "admin",
-            email: "admin@example.com",
-            password: "admin123",
-            role: "admin",
+            user: "isaac",
+            username: "sir isaac newton",
+            email: "isaac@example.com",
+            password: "secret",
         },
-        { username: "alice", email: "alice@example.com", password: "secret" },
-        { username: "bob", email: "bob@example.com", password: "secret" },
-        { username: "carol", email: "carol@example.com", password: "secret" },
-        { username: "dave", email: "dave@example.com", password: "secret" },
-        { username: "eve", email: "eve@example.com", password: "secret" },
-        { username: "frank", email: "frank@example.com", password: "secret" },
-        { username: "grace", email: "grace@example.com", password: "secret" },
+        {
+            user: "carl",
+            username: "johann carl friedrich gauss",
+            email: "carl@example.com",
+            password: "secret",
+        },
+        {
+            user: "leonhard",
+            username: "leonhard euler",
+            email: "leonhard@example.com",
+            password: "secret",
+        },
+        {
+            user: "euclid",
+            username: "euclid of alexandria",
+            email: "euclid@example.com",
+            password: "secret",
+        },
+        {
+            user: "archimedes",
+            username: "archimedes of syracuse",
+            email: "archimedes@example.com",
+            password: "secret",
+        },
+        {
+            user: "alan",
+            username: "alan mathison turing",
+            email: "alan@example.com",
+            password: "secret",
+        },
+        {
+            user: "pierre",
+            username: "pierre-simon laplace",
+            email: "pierre@example.com",
+            password: "secret",
+        },
+        {
+            user: "henri",
+            username: "jules henri poincaré",
+            email: "henri@example.com",
+            password: "secret",
+        },
+        {
+            user: "bernhard",
+            username: "georg friedrich bernhard riemann",
+            email: "bernhard@example.com",
+            password: "secret",
+        },
+        {
+            user: "david",
+            username: "david hilbert",
+            email: "david@example.com",
+            password: "secret",
+        },
     ];
 
     const insert = db.prepare(
-        "INSERT INTO users(username,email,password,role) VALUES (?,?,?,?)"
+        "INSERT INTO users(user,username,email,password,role) VALUES (?,?,?,?,?)"
     );
     const insertMany = db.transaction((users) => {
         for (const u of users) {
             insert.run(
+                u.user,
                 u.username,
                 u.email,
                 bcrypt.hashSync(u.password, 10),
@@ -154,15 +203,15 @@ function requireAuth(role = null) {
     };
 }
 app.post("/api/register", (req, res) => {
-    const { username, email, password, role } = req.body;
-    if (!username || !email || !password)
+    const { user, username, email, password, role } = req.body;
+    if (!user || !username || !email || !password)
         return res.status(400).json({ error: "Missing fields" });
     try {
         const hash = bcrypt.hashSync(password, 10);
         const stmt = db.prepare(
-            "INSERT INTO users(username,email,password,role)VALUES(?,?,?,?)"
+            "INSERT INTO users(user,username,email,password,role)VALUES(?,?,?,?,?)"
         );
-        const info = stmt.run(username, email, hash, role || "user");
+        const info = stmt.run(user, username, email, hash, role || "user");
         res.status(201).json({
             token: generateToken({
                 id: info.lastInsertRowid,
@@ -180,10 +229,10 @@ app.post("/api/register", (req, res) => {
     }
 });
 app.post("/api/login", (req, res) => {
-    const { username, password } = req.body;
-    if (!username || !password)
+    const { user, password } = req.body;
+    if (!user || !password)
         return res.status(400).json({ error: "Missing fields" });
-    const u = db.prepare("SELECT * FROM users WHERE username=?").get(username);
+    const u = db.prepare("SELECT * FROM users WHERE user=?").get(user);
     if (!u || !bcrypt.compareSync(password, u.password))
         return res.status(401).json({ error: "Invalid credentials" });
     res.json({ token: generateToken(u), userId: u.id });
@@ -350,7 +399,9 @@ app.post("/api/tickets/:id/comments", requireAuth(), (req, res) => {
 });
 
 app.get("/api/users", requireAuth(), (req, res) => {
-    const users = db.prepare("SELECT id, username, email FROM users").all();
+    const users = db
+        .prepare("SELECT id, user, username, email FROM users")
+        .all();
     res.json(users);
 });
 

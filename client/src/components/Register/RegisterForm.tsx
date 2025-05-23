@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 
 type Inputs = {
+    user: string;
     username: string;
     email: string;
     password: string;
@@ -12,6 +13,7 @@ type Inputs = {
 
 interface RegisterFormProps {
     onRegisterSubmit: (
+        user: string,
         username: string,
         password: string,
         email: string
@@ -29,18 +31,20 @@ export default function RegisterForm({ onRegisterSubmit }: RegisterFormProps) {
     const [showPasswordRepeat, setShowPasswordRepeat] = React.useState(false);
 
     const onSubmit: SubmitHandler<Inputs> = ({
+        user,
         username,
         password,
         passwordRepeat,
         email,
     }) => {
-        if (username && password && email && passwordRepeat) {
+        if (user && username && password && email && passwordRepeat) {
             if (password.trim() === passwordRepeat.trim()) {
-                onRegisterSubmit(username, password, email);
+                onRegisterSubmit(user, username, password, email);
             }
         }
     };
 
+    const userId = React.useId();
     const usernameId = React.useId();
     const passwordId = React.useId();
     const passwordRepeatId = React.useId();
@@ -58,6 +62,35 @@ export default function RegisterForm({ onRegisterSubmit }: RegisterFormProps) {
                     <h1 className="text-2xl text-zinc-500 mb-8 font-semibold">
                         Register
                     </h1>
+
+                    <div className="flex flex-col gap-1">
+                        <label
+                            htmlFor={userId}
+                            className="text-sm text-zinc-400">
+                            User
+                        </label>
+                        <input
+                            id={userId}
+                            placeholder="johndoe"
+                            className="w-full bg-transparent placeholder:text-zinc-600
+                                 text-zinc-200 text-sm border border-zinc-800 
+                                 rounded-md px-3 py-2 transition duration-300 ease 
+                                 focus:outline-none focus:border-zinc-600
+                                  hover:border-zinc-600 shadow-sm focus:shadow"
+                            type="text"
+                            aria-invalid={Boolean(errors.user)}
+                            {...register("user", {
+                                required: "User is required",
+                            })}
+                        />
+                        {errors.user && (
+                            <span
+                                role="alert"
+                                className="text-xs text-red-500">
+                                {errors.user.message}
+                            </span>
+                        )}
+                    </div>
 
                     <div className="flex flex-col gap-1">
                         <label

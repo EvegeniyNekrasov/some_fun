@@ -4,7 +4,7 @@ import { z } from "zod";
  * Authenticatrion schema for login
  */
 export const AuthLoginSchema = z.object({
-    username: z.string(),
+    user: z.string(),
     password: z.string(),
 });
 
@@ -12,6 +12,7 @@ export const AuthLoginSchema = z.object({
  * Authenticatrion schema for registration
  */
 export const AuthRegisterSchema = z.object({
+    user: z.string(),
     username: z.string(),
     email: z.string(),
     password: z.string(),

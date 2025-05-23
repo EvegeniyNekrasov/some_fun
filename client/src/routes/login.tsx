@@ -20,8 +20,8 @@ function Login() {
 
     return (
         <LoginForm
-            onLoginSubmit={(username: string, password: string) =>
-                mutate({ username, password })
+            onLoginSubmit={(user: string, password: string) =>
+                mutate({ user, password })
             }
         />
     );

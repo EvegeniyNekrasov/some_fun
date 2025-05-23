@@ -16,7 +16,7 @@ export default function useLogin() {
     >({
         mutationFn: (data) =>
             loginUser({
-                body: { username: data.username, password: data.password },
+                body: { user: data.user, password: data.password },
             }),
 
         onSuccess: (data) => {

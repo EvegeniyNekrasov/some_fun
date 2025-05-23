@@ -8,7 +8,7 @@ interface LoginFormProps {
 }
 
 type Inputs = {
-    username: string;
+    user: string;
     password: string;
 };
 
@@ -21,8 +21,8 @@ export default function LoginForm({ onLoginSubmit }: LoginFormProps) {
 
     const [showPassword, setShowPassword] = React.useState(false);
 
-    const onSubmit: SubmitHandler<Inputs> = ({ username, password }) => {
-        if (username && password) onLoginSubmit(username, password);
+    const onSubmit: SubmitHandler<Inputs> = ({ user, password }) => {
+        if (user && password) onLoginSubmit(user, password);
     };
 
     const usernameId = React.useId();
@@ -55,16 +55,16 @@ export default function LoginForm({ onLoginSubmit }: LoginFormProps) {
                              focus:outline-none focus:border-zinc-600
                               hover:border-zinc-600 shadow-sm focus:shadow"
                             type="text"
-                            aria-invalid={Boolean(errors.username)}
-                            {...register("username", {
-                                required: "Username is required",
+                            aria-invalid={Boolean(errors.user)}
+                            {...register("user", {
+                                required: "User is required",
                             })}
                         />
-                        {errors.username && (
+                        {errors.user && (
                             <span
                                 role="alert"
                                 className="text-xs text-red-500">
-                                {errors.username.message}
+                                {errors.user.message}
                             </span>
                         )}
                     </div>

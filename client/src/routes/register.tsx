@@ -18,11 +18,12 @@ function Register() {
     const { mutate } = useRegister();
 
     const handleRegisterSubmit = (
+        user: string,
         username: string,
         password: string,
         email: string
     ) => {
-        mutate({ username, password, email });
+        mutate({ user, username, password, email });
     };
 
     return <RegisterForm onRegisterSubmit={handleRegisterSubmit} />;

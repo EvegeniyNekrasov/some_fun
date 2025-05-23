@@ -1,6 +1,7 @@
 import { Link, useMatchRoute, useNavigate } from "@tanstack/react-router";
 import { listOfNavLinks } from "./links";
 import { useAuth } from "../../context/AuthContext";
+import AppVersion from "@/components/AppVersion";
 
 export default function Sidebar() {
     useMatchRoute();
@@ -21,6 +22,7 @@ export default function Sidebar() {
             className="flex flex-col gap-2 w-full h-full p-4 border-r-1
                          border-r-zinc-900">
             <span className="text-lg font-semibold">Tickets app</span>
+            <AppVersion />
 
             <nav>
                 <ul>

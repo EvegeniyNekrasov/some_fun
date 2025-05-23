@@ -1,6 +1,7 @@
-import { createComment } from "@/api/comments";
-import { QUERY_KEY_COMMENT_LIST } from "@/types/comments";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { QUERY_KEY_COMMENT_LIST } from "@/types/comments";
+import { createComment } from "@/api/comments";
 
 type CreateVars = {
     id: number;

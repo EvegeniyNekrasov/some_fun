@@ -1,11 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import useGetTicketById from "@/hooks/tickets/useGetTicketById";
-import useGetUsersList from "@/hooks/users/useGetUsersList";
+import { Link, createFileRoute } from "@tanstack/react-router";
+
+import type { Comment } from "@/types/comments";
+import CommentForm from "@/components/Forms/CommentForm";
 import { useAuth } from "@/context/AuthContext";
 import useGetCommentsByTicketId from "@/hooks/comments/useGetCommentsByTicketId";
-import * as React from "react";
-import type { Comment } from "@/types/comments";
-import { Button } from "@/ui/button/Button";
+import useGetTicketById from "@/hooks/tickets/useGetTicketById";
+import useGetUsersList from "@/hooks/users/useGetUsersList";
 import useMutateCreateComment from "@/hooks/comments/useMutateCreateComment";
 
 export const Route = createFileRoute(
@@ -19,7 +19,6 @@ function RouteComponent() {
     const projectId = Route.useParams().projectId;
     const { userId } = useAuth();
     const users = useGetUsersList();
-    const [commentInput, setCommentInput] = React.useState("");
     const { mutate } = useMutateCreateComment();
 
     const isNumber = (value: string): boolean => {
@@ -43,15 +42,14 @@ function RouteComponent() {
         return findedUser.username;
     }
 
-    function handleAddComment(): void {
+    function onCommentSubmit(comment: string) {
         const newComment: Partial<Comment> = {
             ticket_id: Number(ticketId),
             user_id: userId ?? 0,
-            message: commentInput,
+            message: comment,
         };
 
         mutate({ id: Number(ticketId), data: newComment });
-        setCommentInput("");    
     }
 
     return (
@@ -74,24 +72,7 @@ function RouteComponent() {
             </div>
             <div className="flex flex-col gap-2">
                 <span>Comments</span>
-                <div className="flex items-center gap-4">
-                    <input
-                        value={commentInput}
-                        onInput={(e) =>
-                            setCommentInput(
-                                (e.target as HTMLInputElement).value
-                            )
-                        }
-                        className="px-4 py-2 bg-zinc-600 w-full rounded outline-0"
-                        type="text"
-                        placeholder="add comment..."
-                    />
-                    <Button
-                        className="w-[200px]"
-                        onClick={handleAddComment}>
-                        Add comment
-                    </Button>
-                </div>
+                <CommentForm onCommentSubmit={onCommentSubmit} />
                 {comments.isLoading ? <div>Loading comments...</div> : null}
                 {!comments.isLoading && comments.data ? (
                     <div>

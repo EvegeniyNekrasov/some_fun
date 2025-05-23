@@ -11,7 +11,7 @@ const router = createRouter({
     routeTree,
     defaultPreload: "intent",
     scrollRestoration: true,
-    context: { auth: undefined },
+    context: { auth: undefined! },
 });
 
 declare module "@tanstack/react-router" {
@@ -22,7 +22,7 @@ declare module "@tanstack/react-router" {
 
 const queryClient = new QueryClient();
 
-function MainApp() {
+const MainApp = () => {
     const auth = useAuth();
     return (
         <RouterProvider
@@ -30,7 +30,7 @@ function MainApp() {
             context={{ auth }}
         />
     );
-}
+};
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {

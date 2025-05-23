@@ -1,41 +1,48 @@
-import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { Link, useMatchRoute, useNavigate } from "@tanstack/react-router";
 import { listOfNavLinks } from "./links";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Sidebar() {
-    const location = useRouterState({ select: (s) => s.location });
+    useMatchRoute();
 
-    const auth = useAuth();
-    const navigate = useNavigate({ from: location.pathname });
+    const navigate = useNavigate();
+    const { logout } = useAuth();
 
     const hadleLogut = () => {
-        auth.logout();
+        logout();
         navigate({ to: "/login" });
     };
 
-    return (
-        <div className="flex flex-col gap-2 w-full h-full p-4">
-            <span>Tickets app</span>
-            {listOfNavLinks.map(({ path, name, icon: Icon }) => {
-                const isActive = location.pathname === path;
-                const activeStyle = isActive ? "bg-zinc-800" : "";
+    const linkStyle = `flex items-center gap-2 px-4 py-2 rounded 
+        hover:bg-zinc-600 [&.active]:bg-zinc-700`;
 
-                return (
-                    <Link
-                        className={`px-4 py-2 rounded hover:bg-zinc-600 
-                            flex items-center gap-2 ${activeStyle}`}
-                        key={path}
-                        to={path}>
-                        {Icon && <Icon className="w-4 h-4" />}
-                        {name}
-                    </Link>
-                );
-            })}
+    return (
+        <aside
+            className="flex flex-col gap-2 w-full h-full p-4 border-r-1
+                         border-r-zinc-900">
+            <span className="text-lg font-semibold">Tickets app</span>
+
+            <nav>
+                <ul>
+                    {listOfNavLinks.map(({ path, name, icon: Icon }) => (
+                        <li key={path}>
+                            <Link
+                                to={path}
+                                className={linkStyle}
+                                preload="intent">
+                                {Icon && <Icon className="w-4 h-4" />}
+                                {name}
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+
             <button
                 onClick={hadleLogut}
                 className="mt-auto p-2 bg-zinc-800 rounded">
                 logout
             </button>
-        </div>
+        </aside>
     );
 }

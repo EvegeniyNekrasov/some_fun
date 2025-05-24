@@ -1,9 +1,9 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
-
+import Breadcrumbs from "@/components/Breadcrumbs";
 import type { Comment } from "@/types/comments";
 import CommentForm from "@/components/Forms/CommentForm";
 import CommentList from "@/components/Comments/CommentsList";
 import GoBackButton from "@/ui/button/GoBackButton";
+import { createFileRoute } from "@tanstack/react-router";
 import { useAuth } from "@/context/AuthContext";
 import useGetCommentsByTicketId from "@/hooks/comments/useGetCommentsByTicketId";
 import useGetTicketById from "@/hooks/tickets/useGetTicketById";
@@ -22,6 +22,20 @@ function RouteComponent() {
     const { userId } = useAuth();
     const users = useGetUsersList();
     const { mutate } = useMutateCreateComment();
+
+    const crumbs = [
+        { to: "/projects", label: "Projects" },
+        {
+            to: "/projects/$projectId",
+            params: { projectId: projectId },
+            label: `Project ${projectId}`,
+        },
+        {
+            to: "/projects/$projectId/ticket/$ticketId",
+            params: { projectId: projectId, ticketId: ticketId },
+            label: `Ticket #${ticketId}`,
+        },
+    ];
 
     const isNumber = (value: string): boolean => {
         return !isNaN(Number(value.trim()));
@@ -55,7 +69,8 @@ function RouteComponent() {
     }
 
     return (
-        <div className="p-2 w-full flex flex-col gap-2">
+        <div className="page w-full flex flex-col gap-2">
+            <Breadcrumbs items={crumbs} />
             <GoBackButton
                 linkOptions={{
                     to: "/projects/$projectId",

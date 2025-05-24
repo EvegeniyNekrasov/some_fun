@@ -1,11 +1,14 @@
 import * as React from "react";
+
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { projectsQueryOptions } from "../../../hooks/projects/useGetProjects";
+
+import Breadcrumbs from "@/components/Breadcrumbs";
+import { Button } from "@/ui/button/Button";
+import ProjectForm from "@/components/Projects/ProjectForm";
+import SlideOver from "@/components/SlideOver/SlideOver";
+import { projectsQueryOptions } from "@/hooks/projects/useGetProjects";
+import useMutateCreateProject from "@/hooks/projects/useMutateCreateProject";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import SlideOver from "../../../components/SlideOver/SlideOver";
-import ProjectForm from "../../../components/Projects/ProjectForm";
-import useMutateCreateProject from "../../../hooks/projects/useMutateCreateProject";
-import { Button } from "../../../ui/button/Button";
 
 export const Route = createFileRoute("/_app/projects/")({
     component: RouteComponent,
@@ -15,6 +18,13 @@ function RouteComponent() {
     const projectsQuery = useSuspenseQuery(projectsQueryOptions);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
     const { mutate } = useMutateCreateProject();
+
+    const crumbs = [
+        {
+            to: "/projects",
+            label: `Projecs`,
+        },
+    ];
 
     const navigate = useNavigate({ from: "/projects" });
 
@@ -37,7 +47,8 @@ function RouteComponent() {
     }
 
     return (
-        <div className="p-4 flex flex-col gap-4">
+        <div className="page flex flex-col gap-4">
+            <Breadcrumbs items={crumbs} />
             <div className="flex items-center justify-between">
                 <span>Header project page</span>
                 <Button

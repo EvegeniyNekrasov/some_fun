@@ -1,18 +1,21 @@
 import * as React from "react";
-import { createFileRoute } from "@tanstack/react-router";
+
+import type { Ticket, Tickets } from "@/types/tickets";
+
+import Breadcrumbs from "@/components/Breadcrumbs";
+import { Button } from "@/ui/button/Button";
+import Dialog from "@/ui/dialog/Dialog";
 import { Kanban } from "lucide-react";
-import type { Status } from "../../../../types/statuses";
-import useGetTicketsListByProjectId from "../../../../hooks/tickets/useGetTicketsListByProjectId";
-import useGetProjectById from "../../../../hooks/projects/useGetProjectById";
-import useGetStatuses from "../../../../hooks/statuses/useGetStatuses";
-import Dialog from "../../../../ui/dialog/Dialog";
-import useGetUsersList from "../../../../hooks/users/useGetUsersList";
-import SlideOver from "../../../../components/SlideOver/SlideOver";
-import { Button } from "../../../../ui/button/Button";
-import TicketForm from "../../../../components/Projects/TicketForm";
-import useMutateCreateTicket from "../../../../hooks/tickets/useMutateCreateTicket";
-import type { Ticket, Tickets } from "../../../../types/tickets";
-import useMutateUpdateTicket from "../../../../hooks/tickets/useMutateUpdateTicket";
+import SlideOver from "@/components/SlideOver/SlideOver";
+import type { Status } from "@/types/statuses";
+import TicketForm from "@/components/Projects/TicketForm";
+import { createFileRoute } from "@tanstack/react-router";
+import useGetProjectById from "@/hooks/projects/useGetProjectById";
+import useGetStatuses from "@/hooks/statuses/useGetStatuses";
+import useGetTicketsListByProjectId from "@/hooks/tickets/useGetTicketsListByProjectId";
+import useGetUsersList from "@/hooks/users/useGetUsersList";
+import useMutateCreateTicket from "@/hooks/tickets/useMutateCreateTicket";
+import useMutateUpdateTicket from "@/hooks/tickets/useMutateUpdateTicket";
 
 export const Route = createFileRoute("/_app/projects/$projectId/")({
     component: RouteComponent,
@@ -34,6 +37,15 @@ function RouteComponent() {
     const ticketListaData = useGetTicketsListByProjectId(Number(projectId));
     const usersList = useGetUsersList();
     const statusesData = useGetStatuses();
+
+    const crumbs = [
+        { to: "/projects", label: "Projects" },
+        {
+            to: "/projects/$projectId",
+            params: { projectId: projectId },
+            label: `Project ${projectId}`,
+        },
+    ];
 
     const { mutate: updateTicketMutate } = useMutateUpdateTicket();
     const { mutate: createTicketMutate } = useMutateCreateTicket();
@@ -57,16 +69,6 @@ function RouteComponent() {
         }
     }, [ticketListaData.data]);
 
-    // function onDragStart(
-    //     e: React.DragEvent<HTMLDivElement>,
-    //     project_id: number,
-    //     fromStatusId: number
-    // ) {
-    //     e.dataTransfer.setData(
-    //         "application/json",
-    //         JSON.stringify({ project_id, fromStatusId })
-    //     );
-    // }
     function onDragStart(
         e: React.DragEvent<HTMLDivElement>,
         ticketId: number,
@@ -157,7 +159,8 @@ function RouteComponent() {
     }
 
     return (
-        <div className="p-4 flex flex-col gap-2 w-full h-full">
+        <div className="page flex flex-col gap-2 w-full h-full">
+            <Breadcrumbs items={crumbs} />
             {projectData.data ? (
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center justify-between">

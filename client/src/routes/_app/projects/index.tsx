@@ -22,7 +22,7 @@ function RouteComponent() {
     const crumbs = [
         {
             to: "/projects",
-            label: `Projecs`,
+            label: `Projects`,
         },
     ];
 

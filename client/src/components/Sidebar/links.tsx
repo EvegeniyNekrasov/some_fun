@@ -1,4 +1,5 @@
-import { Home } from "lucide-react";
+import { LayoutDashboard, SquareKanban, BadgeInfo } from "lucide-react";
+
 import type { LucideIcon } from "lucide-react";
 
 type NavigationLink = {
@@ -9,7 +10,7 @@ type NavigationLink = {
 };
 
 export const listOfNavLinks: NavigationLink[] = [
-    { path: "/", name: "Dashboar", icon: Home },
-    { path: "/about", name: "About", icon: Home },
-    { path: "/projects", name: "Projects", icon: Home },
+    { path: "/", name: "Home", icon: LayoutDashboard },
+    { path: "/about", name: "About", icon: BadgeInfo },
+    { path: "/projects", name: "Projects", icon: SquareKanban },
 ];

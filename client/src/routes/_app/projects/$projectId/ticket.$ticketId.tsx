@@ -3,6 +3,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import type { Comment } from "@/types/comments";
 import CommentForm from "@/components/Forms/CommentForm";
 import CommentList from "@/components/Comments/CommentsList";
+import GoBackButton from "@/ui/button/GoBackButton";
 import { useAuth } from "@/context/AuthContext";
 import useGetCommentsByTicketId from "@/hooks/comments/useGetCommentsByTicketId";
 import useGetTicketById from "@/hooks/tickets/useGetTicketById";
@@ -55,11 +56,12 @@ function RouteComponent() {
 
     return (
         <div className="p-2 w-full flex flex-col gap-2">
-            <Link
-                to="/projects/$projectId"
-                params={{ projectId }}>
-                Go back
-            </Link>
+            <GoBackButton
+                linkOptions={{
+                    to: "/projects/$projectId",
+                    params: { projectId },
+                }}
+            />
 
             <div className="p-4 w-full bg-zinc-600">
                 <span className="text-2xl">Title: {data?.title}</span>

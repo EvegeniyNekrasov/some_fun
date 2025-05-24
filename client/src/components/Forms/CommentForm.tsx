@@ -11,11 +11,13 @@ export default function CommentForm({ onCommentSubmit }: CommentFormProps) {
     const {
         register,
         handleSubmit,
+        resetField,
         formState: { errors },
     } = useForm<Inputs>();
 
     const onSubmit: SubmitHandler<Inputs> = ({ comment }) => {
         if (comment) onCommentSubmit(comment);
+        resetField("comment");
     };
 
     return (

@@ -46,7 +46,7 @@ export default function Breadcrumbs({
                             <Link
                                 to={c.to}
                                 params={c.params}
-                                className="hover:underline hover:text-blue-500 text-primary">
+                                className="hover:underline hover:text-amber-500 text-primary">
                                 {c.label}
                             </Link>
                         )}

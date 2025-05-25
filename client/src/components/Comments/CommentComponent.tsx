@@ -24,7 +24,7 @@ export default function CommentComponent({
     return (
         <div className="flex gap-2 flex-start">
             <div
-                className="w-[50px] h-[50px] flex items-center justify-center
+                className="min-w-[50px] w-[50px] h-[50px] flex items-center justify-center
                             rounded-full bg-zinc-900 text-white">
                 <span className="text-sm">
                     {helpers.makeAbbreviation(username)}
@@ -32,8 +32,8 @@ export default function CommentComponent({
             </div>
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold">{username}</span>
-                    <span className="text-sm">
+                    <span className="text-sm font-bold text-zinc-200">{username}</span>
+                    <span className="text-sm text-zinc-400">
                         {dayjs(comment.created_at).fromNow()}
                     </span>
                 </div>

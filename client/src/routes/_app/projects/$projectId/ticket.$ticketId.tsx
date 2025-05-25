@@ -1,14 +1,19 @@
+import * as helpers from "@/utils/helpers";
+import * as React from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useAuth } from "@/context/AuthContext";
+
 import Breadcrumbs from "@/components/Breadcrumbs";
 import type { Comment } from "@/types/comments";
 import CommentForm from "@/components/Forms/CommentForm";
 import CommentList from "@/components/Comments/CommentsList";
-import GoBackButton from "@/ui/button/GoBackButton";
-import { createFileRoute } from "@tanstack/react-router";
-import { useAuth } from "@/context/AuthContext";
 import useGetCommentsByTicketId from "@/hooks/comments/useGetCommentsByTicketId";
+
 import useGetTicketById from "@/hooks/tickets/useGetTicketById";
 import useGetUsersList from "@/hooks/users/useGetUsersList";
 import useMutateCreateComment from "@/hooks/comments/useMutateCreateComment";
+
+import Select from "@/ui/select/Select";
 
 export const Route = createFileRoute(
     "/_app/projects/$projectId/ticket/$ticketId"
@@ -22,6 +27,16 @@ function RouteComponent() {
     const { userId } = useAuth();
     const users = useGetUsersList();
     const { mutate } = useMutateCreateComment();
+    const { data, isFetching, isLoading, isError } =
+        useGetTicketById(+ticketId);
+
+    const [priority, setPriority] = React.useState<
+        (typeof helpers.priorityList)[number]["value"] | ""
+    >("");
+
+    React.useEffect(() => {
+        if (data) setPriority(data.priority);
+    }, [data]);
 
     const crumbs = [
         { to: "/projects", label: "Projects" },
@@ -44,9 +59,6 @@ function RouteComponent() {
     const ticket_id = isNumber(ticketId) ? ticketId : undefined;
 
     const comments = useGetCommentsByTicketId(Number(ticket_id));
-
-    const { data, isFetching, isLoading, isError } =
-        useGetTicketById(+ticketId);
 
     if (isFetching || isLoading) return <span>Loading...</span>;
     if (isError) return <span>ooops... some error</span>;
@@ -71,23 +83,23 @@ function RouteComponent() {
     return (
         <div className="page w-full flex flex-col gap-2">
             <Breadcrumbs items={crumbs} />
-            <GoBackButton
-                linkOptions={{
-                    to: "/projects/$projectId",
-                    params: { projectId },
-                }}
+
+            <span className="text-2xl">Title: {data?.title}</span>
+            <div className="p-2 bg-zinc-700">
+                <span>{data?.description}</span>
+            </div>
+            {data?.assignee_id ? (
+                <span>Assigned: {getAssignedUser()}</span>
+            ) : null}
+
+            <Select
+                title="Ticket priority"
+                value={priority}
+                options={helpers.priorityList}
+                onChange={setPriority}
+                className="w-[300px]"
             />
 
-            <div className="p-4 w-full bg-zinc-600">
-                <span className="text-2xl">Title: {data?.title}</span>
-                <div className="p-2 bg-zinc-700">
-                    <span>{data?.description}</span>
-                </div>
-                {data?.assignee_id ? (
-                    <span>Assigned: {getAssignedUser()}</span>
-                ) : null}
-                <span>Priotity: {data?.priority}</span>
-            </div>
             <div className="flex flex-col gap-2">
                 <span>Comments</span>
                 <CommentForm onCommentSubmit={onCommentSubmit} />

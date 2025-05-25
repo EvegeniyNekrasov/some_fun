@@ -52,7 +52,7 @@ function RouteComponent() {
             <div className="flex items-center justify-between">
                 <span>Header project page</span>
                 <Button
-                    variant={"link"}
+                    variant={"primary"}
                     onClick={handleCreateProject}>
                     Create project
                 </Button>
@@ -69,7 +69,7 @@ function RouteComponent() {
                                 key={item.id}
                                 className="flex flex-col gap-2 p-5 min-w-[150px] h-full max-w-[220px] w-full bg-zinc-700">
                                 <Button
-                                    variant={"link"}
+                                    variant={"primary"}
                                     size={"sm"}
                                     onClick={() => handleGoTo(item.id)}>
                                     {item.key}

@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import type { Users } from "../../types/users";
@@ -17,11 +16,11 @@ type TicketCreate = {
 
 interface TicketFormProps {
     onTicketCreate: (ticket: TicketCreate) => void;
-    usersList: Users; // [{id,username,email}, …]
-    currentUserId: number; // id del usuario autenticado
+    usersList: Users;
+    currentUserId: number;
 }
 
-type Inputs = Omit<TicketCreate, "user_id">; // user_id lo inyectamos nosotros
+type Inputs = Omit<TicketCreate, "user_id">;
 
 export default function TicketForm({
     onTicketCreate,
@@ -30,7 +29,6 @@ export default function TicketForm({
 }: TicketFormProps) {
     const {
         register,
-        control,
         handleSubmit,
         formState: { errors },
     } = useForm<Inputs>({
@@ -55,7 +53,6 @@ export default function TicketForm({
         <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 w-full h-full p-2">
-            {/* TITLE ----------------------------------------------------------- */}
             <div className="flex flex-col gap-1">
                 <label
                     htmlFor="title"
@@ -79,7 +76,6 @@ export default function TicketForm({
                 )}
             </div>
 
-            {/* DESCRIPTION ----------------------------------------------------- */}
             <div className="flex flex-col gap-1">
                 <label
                     htmlFor="description"
@@ -97,7 +93,6 @@ export default function TicketForm({
                 />
             </div>
 
-            {/* STATUS (custom Select) ----------------------------------------- */}
             <div className="flex flex-col gap-1">
                 <label
                     htmlFor={"status_id"}
@@ -108,9 +103,9 @@ export default function TicketForm({
                 <select
                     id={"status_id"}
                     className="w-full bg-transparent text-zinc-200 text-sm border border-zinc-800
-               rounded-md px-3 py-2 transition duration-300 ease
-               focus:outline-none focus:border-zinc-600 hover:border-zinc-600
-               placeholder:text-zinc-600 shadow-sm focus:shadow"
+                        rounded-md px-3 py-2 transition duration-300 ease
+                        focus:outline-none focus:border-zinc-600 hover:border-zinc-600
+                        placeholder:text-zinc-600 shadow-sm focus:shadow"
                     aria-invalid={Boolean(errors.status_id)}
                     defaultValue=""
                     {...register("status_id", {
@@ -138,7 +133,6 @@ export default function TicketForm({
                 )}
             </div>
 
-            {/* PRIORITY -------------------------------------------------------- */}
             <div className="flex flex-col gap-1">
                 <label
                     htmlFor="priority"
@@ -156,7 +150,6 @@ export default function TicketForm({
                 </select>
             </div>
 
-            {/* ASSIGNEE -------------------------------------------------------- */}
             <div className="flex flex-col gap-1">
                 <label
                     htmlFor="assignee"
@@ -179,7 +172,6 @@ export default function TicketForm({
                 </select>
             </div>
 
-            {/* STORY POINTS ---------------------------------------------------- */}
             <div className="flex flex-col gap-1">
                 <label
                     htmlFor="story_points"
@@ -197,7 +189,6 @@ export default function TicketForm({
                 />
             </div>
 
-            {/* SUBMIT ---------------------------------------------------------- */}
             <Button
                 type="submit"
                 className="w-full">

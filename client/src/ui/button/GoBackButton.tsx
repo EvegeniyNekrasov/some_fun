@@ -22,7 +22,7 @@ export default function GoBackButton<
 }: GoBackButtonProps<TRouter, TOptions>) {
     return (
         <Link
-            className="flex items-center gap-2 min-w-[150px] hover:text-blue-600"
+            className="flex items-center gap-2 min-w-[150px] hover:text-amber-500"
             {...linkOptions}>
             <ChevronLeft />
             <span>{label}</span>
